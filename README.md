@@ -5,9 +5,9 @@ Predicting telecom customer churn using machine learning classifiers built on Sc
 ---
 
 ## 📋 Overview
-Customer churn is one of the most critical metrics for telecom providers. Retaining existing customers is significantly more cost-effective than acquiring new ones. This repository implements an end-to-end machine learning pipeline to preprocess customer data, perform exploratory data analysis, and train a Random Forest model to predict churn.
+Customer churn is one of the most critical metrics for telecom providers. Retaining existing customers is significantly more cost-effective than acquiring new ones. This repository implements an end-to-end machine learning pipeline to preprocess customer data, perform exploratory data analysis, and train and tune multiple models (Random Forest and XGBoost) to predict churn.
 
-The project currently achieves a **79% prediction accuracy** using a Random Forest Classifier on test data.
+The project incorporates best practices like **One-Hot Encoding**, **Selective Feature Scaling**, and **SMOTE** (Synthetic Minority Over-sampling Technique) to address class imbalance. Using `RandomizedSearchCV`, the pipeline automatically finds the best hyperparameters, achieving high predictive power with robust ROC-AUC scores.
 
 ---
 
@@ -16,8 +16,12 @@ The project currently achieves a **79% prediction accuracy** using a Random Fore
 ├── data/
 │   └── Telco-Customer-Churn.csv   # Dataset (to be placed here)
 ├── images/
-│   └── confusion_matrix.png       # Saved confusion matrix evaluation plot
+│   ├── confusion_matrix.png       # Saved confusion matrix evaluation plot
+│   ├── roc_curves.png             # Saved ROC curves plot
+│   └── feature_importance.png     # Saved top 15 feature importances plot
 ├── churn_prediction_notebook.ipynb # Interactive Jupyter Notebook analysis
+├── generate_pivot.py               # Generates markdown pivot tables of churn rate
+├── churn_rate_pivot_table.md       # Exported pivot table
 ├── train.py                        # Clean, modular training script
 ├── requirements.txt                # Project dependencies
 └── .gitignore                      # Git exclusion rules
@@ -75,23 +79,29 @@ Key feature groups:
 ## 📈 Preprocessing and Modeling Pipeline
 1. **Numeric Coercion**: Convert `TotalCharges` to float, coercing empty spaces to `NaN`.
 2. **Imputation**: Missing values in `TotalCharges` are filled with the column's median.
-3. **Encoding**: Categorical string features are encoded into numerical values using `LabelEncoder`.
+3. **Column Transformation**: 
+   - **Continuous features** (`tenure`, `MonthlyCharges`, `TotalCharges`) are standard-scaled.
+   - **Categorical features** are transformed using `OneHotEncoder`.
 4. **Data Splitting**: Split into 80% training / 20% test partitions.
-5. **Standard Scaling**: Continuous feature columns are standard-scaled to ensure equal variance.
-6. **Training**: A Scikit-Learn `RandomForestClassifier` is trained on training data.
-7. **Evaluation**: Predictions are checked against test targets using Accuracy and Confusion Matrix metrics.
+5. **Class Imbalance Management**: The training pipeline incorporates **SMOTE** (via `imblearn`) to artificially balance the minority class (Churn=Yes) during training.
+6. **Training & Tuning**: Uses `RandomizedSearchCV` to optimize both a `RandomForestClassifier` and an `XGBClassifier`.
+7. **Evaluation**: Compares models based on ROC-AUC scores, plots ROC curves, confusion matrix, and feature importances for the best model.
 
 ---
 
 ## 📌 Model Evaluation Results
-* **Accuracy Score**: `79.0%`
-* **Confusion Matrix**:
+Upon running the training pipeline, the script outputs the performance (Accuracy, Classification Report, and ROC-AUC score) for both tuned models and saves visualizations:
+* **Confusion Matrix**: Visualizes True/False Positives and Negatives.
+* **ROC Curve**: Compares the True Positive Rate against the False Positive Rate.
+* **Feature Importance**: Highlights the top 15 most important factors driving customer churn.
 
 ![Confusion Matrix](images/confusion_matrix.png)
 
 ---
 
-## 💡 Planned Enhancements
-* **One-Hot Encoding**: Replace ordinal LabelEncoding on nominal columns to improve generalization.
-* **Class Imbalance Management**: Utilize SMOTE oversampling or incorporate class weights (`class_weight="balanced"`) to boost true-positive rates.
-* **Hyperparameter Tuning**: Run RandomizedSearchCV to optimize Random Forest estimators.
+## 💡 Recent Enhancements
+* ✅ **One-Hot Encoding**: Replaced ordinal LabelEncoding with robust OneHotEncoding.
+* ✅ **Class Imbalance Management**: Implemented SMOTE oversampling.
+* ✅ **Selective Scaling**: Only continuous columns are standard scaled now.
+* ✅ **Hyperparameter Tuning**: Integrated `RandomizedSearchCV` for Random Forest and XGBoost to automatically select the best model.
+* ✅ **Pivot Table Generation**: Added `generate_pivot.py` to extract insights on Churn rate by Contract and Internet Service.
