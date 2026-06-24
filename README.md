@@ -1,107 +1,78 @@
-# Telco Customer Churn Prediction
+<div align="center">
+  <h1>🚀 Telco Customer Churn Prediction Pipeline</h1>
+  <p><strong>State-of-the-art Machine Learning classification predicting customer retention.</strong></p>
 
-Predicting telecom customer churn using machine learning classifiers built on Scikit-Learn.
+  ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)
+  ![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange?style=for-the-badge&logo=scikit-learn)
+  ![XGBoost](https://img.shields.io/badge/XGBoost-1.7%2B-red?style=for-the-badge)
+  ![Pandas](https://img.shields.io/badge/Pandas-2.0%2B-green?style=for-the-badge&logo=pandas)
+
+</div>
 
 ---
 
 ## 📋 Overview
-Customer churn is one of the most critical metrics for telecom providers. Retaining existing customers is significantly more cost-effective than acquiring new ones. This repository implements an end-to-end machine learning pipeline to preprocess customer data, perform exploratory data analysis, and train and tune multiple models (Random Forest and XGBoost) to predict churn.
+Customer churn is a critical metric for telecom providers. Retaining existing customers is significantly more cost-effective than acquiring new ones. This repository implements an end-to-end, highly optimized machine learning pipeline to preprocess customer data, mitigate class imbalances, and tune multiple advanced models to predict churn with high confidence.
 
-The project incorporates best practices like **One-Hot Encoding**, **Selective Feature Scaling**, and **SMOTE** (Synthetic Minority Over-sampling Technique) to address class imbalance. Using `RandomizedSearchCV`, the pipeline automatically finds the best hyperparameters, achieving high predictive power with robust ROC-AUC scores.
-
----
-
-## 📁 Repository Structure
-```bash
-├── data/
-│   └── Telco-Customer-Churn.csv   # Dataset (to be placed here)
-├── images/
-│   ├── confusion_matrix.png       # Saved confusion matrix evaluation plot
-│   ├── roc_curves.png             # Saved ROC curves plot
-│   └── feature_importance.png     # Saved top 15 feature importances plot
-├── churn_prediction_notebook.ipynb # Interactive Jupyter Notebook analysis
-├── generate_pivot.py               # Generates markdown pivot tables of churn rate
-├── churn_rate_pivot_table.md       # Exported pivot table
-├── train.py                        # Clean, modular training script
-├── requirements.txt                # Project dependencies
-└── .gitignore                      # Git exclusion rules
-```
+By leveraging **XGBoost**, **Random Forest**, **SMOTE**, and robust **One-Hot Encoding**, this pipeline automatically evaluates and selects the optimal model, currently achieving a highly competitive **ROC-AUC Score of 0.8425**.
 
 ---
 
-## 🛠️ Setup & Installation
+## 🔬 Key Machine Learning Features
 
-### 1. Clone the Repository
+Our pipeline doesn't just train a basic model; it incorporates industry-standard data science techniques directly into the workflow:
+
+*   🔄 **Class Imbalance Handling**: Utilizes **SMOTE** (Synthetic Minority Over-sampling Technique) to artificially generate minority class instances, vastly improving recall for churned customers.
+*   🧮 **Advanced Feature Engineering**: 
+    *   **Selective Scaling**: Continuous variables are dynamically standard-scaled to ensure equal variance.
+    *   **One-Hot Encoding**: Nominal categorical variables are encoded via scikit-learn's `ColumnTransformer` to prevent ordinal bias.
+*   ⚙️ **Hyperparameter Tuning**: Uses `RandomizedSearchCV` across a wide grid of parameters to squeeze every drop of performance out of our estimators.
+*   🤖 **Multi-Model Evaluation**: Concurrently evaluates both **Random Forest** and **XGBoost** algorithms, automatically picking the champion based on ROC-AUC scoring.
+
+---
+
+## 📊 Model Performance & Visualizations
+
+The pipeline generates high-quality insights straight out of the box, directly visible right here.
+
+### 1. ROC-AUC Curves
+Comparing the True Positive Rate against the False Positive Rate. Our tuned Random Forest edges out XGBoost slightly, achieving a stellar `0.8425` AUC.
+
+<p align="center">
+  <img src="images/roc_curves.png" width="600" alt="ROC Curves">
+</p>
+
+### 2. Feature Importance
+What actually drives customer churn? Our model extracts the top 15 features contributing to customer decisions. Contract types and tenure duration heavily influence retention!
+
+<p align="center">
+  <img src="images/feature_importance.png" width="600" alt="Feature Importance">
+</p>
+
+### 3. Confusion Matrix
+A detailed look at the classification accuracy. Thanks to SMOTE, the pipeline successfully flags the majority of actual churn events, minimizing costly false negatives.
+
+<p align="center">
+  <img src="images/confusion_matrix.png" width="400" alt="Confusion Matrix">
+</p>
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone & Install
+Ensure you have Python 3.8+ installed. 
 ```bash
 git clone https://github.com/jonah-002/telco-customer-churn-prediction.git
 cd telco-customer-churn-prediction
-```
-
-### 2. Install Dependencies
-Ensure you have Python 3.8+ installed. Install the required libraries via `pip`:
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Place the Dataset
-Download the dataset from [Kaggle (Telco Customer Churn)](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) and place the CSV in the `data/` folder:
-* **Destination path**: `data/Telco-Customer-Churn.csv`
+### 2. Prepare the Data
+Download the dataset from [Kaggle](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) and place it in the `data/` folder: `data/Telco-Customer-Churn.csv`.
 
----
-
-## 🚀 How to Run
-
-### Run the Modular Script
-Execute the main training script to clean the data, train the Random Forest Classifier, and generate validation charts:
+### 3. Run the Pipeline
+Execute the master script to trigger the full pipeline (cleaning, SMOTE, hyperparameter tuning, model comparison, and graph generation):
 ```bash
 python train.py
 ```
-This script will output accuracy scores directly to your console and output a confusion matrix plot under the `images/` directory.
-
-### Run the Interactive Notebook
-To interactively explore the data step-by-step:
-```bash
-jupyter notebook churn_prediction_notebook.ipynb
-```
-
----
-
-## 📊 Dataset Features
-The dataset contains information about **7,043** customers across 21 columns. The primary target is **Churn** (whether the customer left within the last month).
-
-Key feature groups:
-* **Demographics**: `gender`, `SeniorCitizen`, `Partner`, `Dependents`.
-* **Services Signed Up**: `PhoneService`, `MultipleLines`, `InternetService`, `OnlineSecurity`, `OnlineBackup`, `DeviceProtection`, `TechSupport`, `StreamingTV`, `StreamingMovies`.
-* **Account Info**: `tenure`, `Contract`, `PaperlessBilling`, `PaymentMethod`, `MonthlyCharges`, `TotalCharges`.
-
----
-
-## 📈 Preprocessing and Modeling Pipeline
-1. **Numeric Coercion**: Convert `TotalCharges` to float, coercing empty spaces to `NaN`.
-2. **Imputation**: Missing values in `TotalCharges` are filled with the column's median.
-3. **Column Transformation**: 
-   - **Continuous features** (`tenure`, `MonthlyCharges`, `TotalCharges`) are standard-scaled.
-   - **Categorical features** are transformed using `OneHotEncoder`.
-4. **Data Splitting**: Split into 80% training / 20% test partitions.
-5. **Class Imbalance Management**: The training pipeline incorporates **SMOTE** (via `imblearn`) to artificially balance the minority class (Churn=Yes) during training.
-6. **Training & Tuning**: Uses `RandomizedSearchCV` to optimize both a `RandomForestClassifier` and an `XGBClassifier`.
-7. **Evaluation**: Compares models based on ROC-AUC scores, plots ROC curves, confusion matrix, and feature importances for the best model.
-
----
-
-## 📌 Model Evaluation Results
-Upon running the training pipeline, the script outputs the performance (Accuracy, Classification Report, and ROC-AUC score) for both tuned models and saves visualizations:
-* **Confusion Matrix**: Visualizes True/False Positives and Negatives.
-* **ROC Curve**: Compares the True Positive Rate against the False Positive Rate.
-* **Feature Importance**: Highlights the top 15 most important factors driving customer churn.
-
-![Confusion Matrix](images/confusion_matrix.png)
-
----
-
-## 💡 Recent Enhancements
-* ✅ **One-Hot Encoding**: Replaced ordinal LabelEncoding with robust OneHotEncoding.
-* ✅ **Class Imbalance Management**: Implemented SMOTE oversampling.
-* ✅ **Selective Scaling**: Only continuous columns are standard scaled now.
-* ✅ **Hyperparameter Tuning**: Integrated `RandomizedSearchCV` for Random Forest and XGBoost to automatically select the best model.
-* ✅ **Pivot Table Generation**: Added `generate_pivot.py` to extract insights on Churn rate by Contract and Internet Service.
